@@ -79,7 +79,7 @@ public class IHMCalculetteTest extends junit.framework.TestCase{
             assertTrue(" ce n'est pas l'IHM attendue ?", subComponents[4] instanceof JButton);// /
 
             empiler("15");
-            assertTrue("empiler(15), en sortie != [15]","[15]".equals(etatPile.getText()));
+            assertEquals("empiler(15), en sortie != [15]","[15]".equals(etatPile.getText()));
             empiler("12");
             assertTrue("empiler(15),empiler(12) en sortie != [12, 15]","[12, 15]".equals(etatPile.getText()));
             assertTrue("15+12 != 27 ???","[27]".equals(add()));

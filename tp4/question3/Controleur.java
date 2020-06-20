@@ -34,15 +34,53 @@ public class Controleur extends JPanel {
 
         setLayout(new GridLayout(2, 1));
         add(donnee);
-        donnee.addActionListener(null /* null est à remplacer */);
+        actualiserInterface();
+
+        donnee.addFocusListener(new FocusListener()
+            {public void focusGained(FocusEvent a) {
+                    donnee.setText("");
+                }
+
+                public void focusLost(FocusEvent a) {
+
+                }
+            });     
+
         JPanel boutons = new JPanel();
         boutons.setLayout(new FlowLayout());
-        boutons.add(push);  push.addActionListener(null /* null est à remplacer */);
-        boutons.add(add);   add.addActionListener(null /* null est à remplacer */);
-        boutons.add(sub);   sub.addActionListener(null /* null est à remplacer */);
-        boutons.add(mul);   mul.addActionListener(null /* null est à remplacer */);
-        boutons.add(div);   div.addActionListener(null /* null est à remplacer */);
-        boutons.add(clear); clear.addActionListener(null /* null est à remplacer */);
+
+        class AL implements ActionListener
+        {
+            public void actionPerformed(ActionEvent ae){
+
+                if(ae.getActionCommand()=="push"){ try{pile.empiler(operande());}catch(Exception e){}}
+                if(ae.getActionCommand()=="+"||ae.getActionCommand()=="-"||ae.getActionCommand()=="*"||ae.getActionCommand()=="/") 
+                {
+                    try{int op1=pile.depiler();
+                        int op2=pile.depiler();
+                        if(ae.getActionCommand()=="+") { pile.empiler(op1+op2);}
+                        if(ae.getActionCommand()=="-") { pile.empiler(op2-op1);}
+                        if(ae.getActionCommand()=="*") { pile.empiler(op2*op1);}
+                        if(ae.getActionCommand()=="/") { 
+                            if(op1!=0){
+                                pile.empiler(op2/op1);}
+                            else{pile.empiler(op2);
+                                pile.empiler(op1);}}}catch(Exception e){}}
+                if(ae.getActionCommand()=="[]"){try{ pile.viderPile();}catch(Exception e){}}
+
+                actualiserInterface();
+
+            }}
+
+        AL al = new AL();
+
+        boutons.add(push);  push.addActionListener(al);
+        boutons.add(add);   add.addActionListener(al);
+        boutons.add(sub);   sub.addActionListener(al);
+        boutons.add(mul);   mul.addActionListener(al);
+        boutons.add(div);   div.addActionListener(al);
+        boutons.add(clear);   clear.addActionListener(al);
+        
         add(boutons);
         boutons.setBackground(Color.red);
         actualiserInterface();
@@ -50,6 +88,13 @@ public class Controleur extends JPanel {
 
     public void actualiserInterface() {
         // à compléter
+        if(pile.estVide()) {add.setEnabled(false);clear.setEnabled(false);div.setEnabled(false);mul.setEnabled(false);sub.setEnabled(false);}
+        if(pile.estPleine()) push.setEnabled(false);
+        if(pile.taille()<2){add.setEnabled(false);div.setEnabled(false);mul.setEnabled(false);sub.setEnabled(false);}
+        if(pile.taille()>=2){add.setEnabled(true);clear.setEnabled(true);div.setEnabled(true);mul.setEnabled(true);sub.setEnabled(true);}
+        if(!pile.estPleine()) push.setEnabled(true);
+        if(!pile.estVide()) clear.setEnabled(true);
+
     }
 
     private Integer operande() throws NumberFormatException {
